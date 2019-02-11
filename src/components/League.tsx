@@ -1,41 +1,41 @@
-import LeagueModel from "../model/League";
-import React, {FunctionComponent, useContext, useMemo, useReducer, useState} from "react";
-import PlayerTableModel from "../model/PlayerTable";
-import LeagueSetting from "../model/LeagueSetting";
+import React, { FunctionComponent, useContext, useMemo, useReducer } from "react";
 import Game from "../model/Game";
-import PlayerTable from "./PlayerTable";
+import LeagueModel from "../model/League";
+import PlayerTableModel from "../model/PlayerTable";
+import DoneGameDispatchContext from "../utils/DoneGameDispatchContext";
 import SettingContext from "../utils/SettingContext";
 import CombinationTable from "./CombinationTable";
-import DoneGameDispatchContext from "../utils/DoneGameDispatchContext";
+import PlayerTable from "./PlayerTable";
 
-type Props = {
+interface Props {
     playerTable: PlayerTableModel;
     doneGames: Game[];
     undoneGames: Game[];
 }
-const League: FunctionComponent<Props> = React.memo(({playerTable, doneGames, undoneGames}) => {
+const League: FunctionComponent<Props> = React.memo(({ playerTable, doneGames, undoneGames }) => {
     const setting = useContext(SettingContext);
-    const [selectedDoneGames, dispatchDoneGames] = useReducer((selectedDoneGames, action)=>{
-        const newImaginaryGame = Game.done(action.game.map(player => playerTable.players[player]));
-        switch(action.action) {
-            case "select":
-                return selectedDoneGames
-                    .filter(game => !game.sameMatch(newImaginaryGame))
-                    .concat([newImaginaryGame]);
-            case "unselect":
-                return selectedDoneGames
-                    .filter(game => !game.sameMatch(newImaginaryGame));
-            default:
-                throw "unknown action";
-        }
-
-    }, []);
-    const modelInstance = useMemo(()=> {
+    const [selectedDoneGames, dispatchDoneGames] = useReducer(
+        (selectedDoneGames: Game[], action: { action: string; game: number[] }) => {
+            const newImaginaryGame = Game.done(
+                action.game.map(player => playerTable.players[player])
+            );
+            switch (action.action) {
+                case "select":
+                    return selectedDoneGames
+                        .filter(game => !game.sameMatch(newImaginaryGame))
+                        .concat([newImaginaryGame]);
+                case "unselect":
+                    return selectedDoneGames.filter(game => !game.sameMatch(newImaginaryGame));
+                default:
+                    throw new Error("unknown action");
+            }
+        },
+        []
+    );
+    const modelInstance = useMemo(() => {
         const model = new LeagueModel(playerTable, setting);
-        doneGames
-            .forEach(game =>model.add(game));
-        undoneGames
-            .forEach(game => model.add(game));
+        doneGames.forEach(game => model.add(game));
+        undoneGames.forEach(game => model.add(game));
 
         return model;
     }, []);
@@ -43,7 +43,6 @@ const League: FunctionComponent<Props> = React.memo(({playerTable, doneGames, un
         const model = modelInstance;
         model.setImaginary(selectedDoneGames);
         model.search();
-        console.log("search");
         return model;
     }, [selectedDoneGames]);
 
@@ -57,7 +56,7 @@ const League: FunctionComponent<Props> = React.memo(({playerTable, doneGames, un
             <p>マスの中：勝-敗 星 順位</p>
             <CombinationTable combination={model.searched} players={playerTable.players} />
         </DoneGameDispatchContext.Provider>
-    )
+    );
 });
 
-export default League
+export default League;

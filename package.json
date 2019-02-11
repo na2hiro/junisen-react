@@ -6,16 +6,24 @@
   "scripts": {
     "start": "webpack-dev-server --open --mode=development",
     "build": "webpack --mode=production",
-    "test": "npm run test"
+    "test": "npm run test",
+    "lint:check": "tslint-config-prettier-check ./tslint.json",
+    "lint": "tslint -c ./tslint.json ./src/**/*.ts ./src/**/*.tsx",
+    "lint:fix": "tslint -c ./tslint.json ./src/**/*.ts ./src/**/*.tsx --fix"
   },
   "author": "na2hiro",
   "license": "MIT",
   "dependencies": {
     "@types/react": "^16.8.2",
     "@types/react-dom": "^16.8.0",
+    "prettier": "^1.16.4",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
     "ts-loader": "^5.3.3",
+    "tslint": "^5.12.1",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.0.1",
+    "tslint-react": "^3.6.0",
     "typescript": "^3.3.3",
     "webpack": "^4.29.3",
     "webpack-dev-server": "^3.1.14"

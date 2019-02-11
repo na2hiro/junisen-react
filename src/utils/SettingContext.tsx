@@ -1,4 +1,4 @@
-import {Context, createContext} from "react";
+import { Context, createContext } from "react";
 import LeagueSetting from "../model/LeagueSetting";
 
 const SettingContext: Context<LeagueSetting> = createContext({
