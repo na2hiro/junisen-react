@@ -1,7 +1,22 @@
 import Player from "./Player";
 
-export default interface Log {
-    enemy: Player;
-    win?: boolean;
-    temp?: boolean;
-}
+type Log =
+    | {
+          enemy: Player;
+      } & (
+          | {
+                type: "done";
+                win: boolean;
+            }
+          | {
+                type: "temp";
+                win: boolean;
+                temp: true;
+            }
+          | {
+                type: "undone";
+            })
+    | {
+          type: "empty";
+      };
+export default Log;

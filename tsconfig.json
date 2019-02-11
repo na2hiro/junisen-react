@@ -9,7 +9,8 @@
     "noImplicitReturns": true,
     "noImplicitAny": true,
     "allowUnreachableCode": false,
-    "allowUnusedLabels": false
+    "allowUnusedLabels": false,
+    "strictNullChecks": true
   },
   "include": [
     "./src/**/*"

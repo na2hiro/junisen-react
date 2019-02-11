@@ -158,12 +158,12 @@ export default class League {
                 result: this.map[player.name]
                     .map(game => {
                         const log = game.getLog(player);
-                        if (!log.temp) {
+                        if (log === null || log.type !== "temp") {
                             return null;
                         }
                         return log.win;
                     })
-                    .filter(n => n !== null)
+                    .filter(n => typeof n === "boolean")
             });
         }
         for (let i = 0; i < games.length; i++) {

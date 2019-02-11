@@ -69,11 +69,11 @@ const PlayerTableRow: FunctionComponent<RowProps> = ({ player, games }) => {
         <tr className={className}>
             <td>{player.name}</td>
             <td>{`${player.win}-${player.lose}`}</td>
-            <td>{(player.rank + 1).toString()}</td>
+            <td>{player.rank + 1}</td>
             <td>{mark}</td>
-            <td className="count">{player.countChallenge.toString()}</td>
-            {setting.playoff && <td className="count">{player.countPlayoff.toString()}</td>}
-            <td className="count">{player.countDown.toString()}</td>
+            <td className="count">{player.countChallenge}</td>
+            {setting.playoff && <td className="count">{player.countPlayoff}</td>}
+            <td className="count">{player.countDown}</td>
             {games.map((game, i) => (
                 <PlayerTableCell game={game} player={player} key={i} />
             ))}
@@ -89,12 +89,19 @@ interface CellProps {
 const PlayerTableCell: FunctionComponent<CellProps> = ({ game, player }) => {
     const doneGameDispatch = useContext(DoneGameDispatchContext);
     const log = game.getLog(player);
-    if (!log.enemy) {
+    if (log.type === "empty") {
         return <td />;
-    } else if (typeof log.win === "undefined" || log.temp) {
+    } else if (log.type === "done") {
+        return (
+            <td>
+                {typeof log.win === "undefined" ? "　" : League.getWinMark(log.win)}
+                <span className="name">{log.enemy.abbrev}</span>
+            </td>
+        );
+    } else {
         let mark,
             action = "select";
-        if (typeof log.win === "undefined") {
+        if (log.type === "undone") {
             mark = "?";
         } else if (log.win) {
             mark = "○";
@@ -113,13 +120,6 @@ const PlayerTableCell: FunctionComponent<CellProps> = ({ game, player }) => {
         return (
             <td>
                 <button onClick={dispatch}>{mark}</button>
-                <span className="name">{log.enemy.abbrev}</span>
-            </td>
-        );
-    } else {
-        return (
-            <td>
-                {typeof log.win === "undefined" ? "　" : League.getWinMark(log.win)}
                 <span className="name">{log.enemy.abbrev}</span>
             </td>
         );

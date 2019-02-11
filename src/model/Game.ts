@@ -20,17 +20,17 @@ export default class Game {
         return new Game(players, false);
     }
 
-    public temp: Player;
+    public temp: Player | null;
     constructor(public players: Player[], public result = false) {}
 
     public getLog(player: Player): Log {
         const enemy = this.players[0] == player ? this.players[1] : this.players[0];
         if (this.result) {
-            return { enemy, win: this.players[0] == player };
+            return { type: "done", enemy, win: this.players[0] == player };
         } else if (this.temp != null) {
-            return { enemy, win: this.temp == player, temp: true };
+            return { type: "temp", enemy, win: this.temp == player, temp: true };
         } else {
-            return { enemy };
+            return { type: "undone", enemy };
         }
     }
 
@@ -50,6 +50,6 @@ export default class Game {
 }
 export class NullGame extends Game {
     public getLog(): Log {
-        return { enemy: null };
+        return { type: "empty" };
     }
 }
