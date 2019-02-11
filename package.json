@@ -1,0 +1,26 @@
+{
+  "name": "junisen-react",
+  "version": "1.0.0",
+  "description": "Listing up and visualize all possible combinations of results in Junisen-style league",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server --open --mode=development",
+    "build": "webpack --mode=production",
+    "test": "npm run test"
+  },
+  "author": "na2hiro",
+  "license": "MIT",
+  "dependencies": {
+    "@types/react": "^16.8.2",
+    "@types/react-dom": "^16.8.0",
+    "react": "^16.8.1",
+    "react-dom": "^16.8.1",
+    "ts-loader": "^5.3.3",
+    "typescript": "^3.3.3",
+    "webpack": "^4.29.3",
+    "webpack-dev-server": "^3.1.14"
+  },
+  "devDependencies": {
+    "webpack-cli": "^3.2.3"
+  }
+}
