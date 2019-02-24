@@ -47,6 +47,10 @@ export default class Game {
         const [that1, that2] = game.players.map(player => player.order).sort();
         return this1 == that1 && this2 == that2;
     }
+
+    public serialize(): number[] {
+        return [this.players[0].order, this.players[1].order];
+    }
 }
 export class NullGame extends Game {
     public getLog(): Log {

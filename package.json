@@ -14,9 +14,11 @@
   "author": "na2hiro",
   "license": "MIT",
   "dependencies": {
+    "@types/query-string": "^6.2.0",
     "@types/react": "^16.8.2",
     "@types/react-dom": "^16.8.0",
     "prettier": "^1.16.4",
+    "query-string": "^6.2.0",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
     "ts-loader": "^5.3.3",
