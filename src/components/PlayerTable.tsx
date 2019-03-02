@@ -4,8 +4,8 @@ import Game from "../model/Game";
 import League from "../model/League";
 import Player from "../model/Player";
 import PlayerTableModel from "../model/PlayerTable";
-import DoneGameDispatchContext from "../utils/DoneGameDispatchContext";
 import SettingContext from "../utils/SettingContext";
+import DoneSelectButton from "./DoneSelectButton";
 
 interface Props {
     model: PlayerTableModel;
@@ -105,7 +105,6 @@ interface CellProps {
 }
 
 const PlayerTableCell: FunctionComponent<CellProps> = ({ game, player }) => {
-    const doneGameDispatch = useContext(DoneGameDispatchContext);
     const log = game.getLog(player);
     if (log.type === "empty") {
         return <td />;
@@ -117,27 +116,9 @@ const PlayerTableCell: FunctionComponent<CellProps> = ({ game, player }) => {
             </td>
         );
     } else {
-        let mark,
-            action = "select";
-        if (log.type === "undone") {
-            mark = "?";
-        } else if (log.win) {
-            mark = "○";
-            action = "unselect";
-        } else {
-            mark = "●";
-        }
-        const dispatch = useCallback(
-            () =>
-                doneGameDispatch({
-                    action,
-                    game: [player.order, log.enemy.order]
-                }),
-            [player, log]
-        );
         return (
             <td>
-                <button onClick={dispatch}>{mark}</button>
+                <DoneSelectButton log={log} player={player} />
                 <span className="name">{log.enemy.abbrev}</span>
             </td>
         );

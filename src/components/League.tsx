@@ -15,6 +15,8 @@ import DoneGameDispatchContext from "../utils/DoneGameDispatchContext";
 import SettingContext from "../utils/SettingContext";
 import CombinationTable from "./CombinationTable";
 import PlayerTable from "./PlayerTable";
+import DoneSelectButton from "./DoneSelectButton";
+import { UndoneLog } from "../model/Log";
 
 interface Props {
     playerTable: PlayerTableModel;
@@ -74,10 +76,14 @@ const League: FunctionComponent<Props> = React.memo(
 
         return (
             <DoneGameDispatchContext.Provider value={dispatchDoneGames}>
+                <h2>
+                    残りの対局<button onClick={onClickClear}>クリア</button>
+                </h2>
+                <UndoneGames undoneGames={undoneGames} />
                 <h2>現在の順位表</h2>
                 {LeagueModel.settingToString(setting)}{" "}
                 <button onClick={onClickClear}>クリア</button>
-                <PlayerTable model={playerTable} games={model.map} />
+                <PlayerTable model={playerTable} games={model.map} combination={model.searched} />
                 <h2>順位表数え上げ</h2>
                 <p>マスの中：勝-敗 星 順位</p>
                 <CombinationTable combination={model.searched} players={playerTable.players} />
@@ -87,3 +93,28 @@ const League: FunctionComponent<Props> = React.memo(
 );
 
 export default League;
+
+type UndoneGamesProps = {
+    undoneGames: Game[];
+};
+const UndoneGames: FunctionComponent<UndoneGamesProps> = ({ undoneGames }) => {
+    return (
+        <ul>
+            {undoneGames.map(game => (
+                <li>
+                    {`${game.players[0].name} (${game.players[0].order + 1}) `}
+                    <DoneSelectButton
+                        player={game.players[0]}
+                        log={game.getLog(game.players[0]) as UndoneLog}
+                    />
+                    {" - "}
+                    <DoneSelectButton
+                        player={game.players[1]}
+                        log={game.getLog(game.players[1]) as UndoneLog}
+                    />
+                    {` ${game.players[1].name} (${game.players[1].order + 1})`}
+                </li>
+            ))}
+        </ul>
+    );
+};
