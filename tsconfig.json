@@ -10,7 +10,8 @@
     "noImplicitAny": true,
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "moduleResolution": "node"
   },
   "include": [
     "./src/**/*"

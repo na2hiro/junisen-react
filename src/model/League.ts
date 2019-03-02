@@ -1,6 +1,7 @@
 import Game, { NullGame } from "./Game";
 import LeagueSetting from "./LeagueSetting";
 import PlayerTable from "./PlayerTable";
+import Player from "./Player";
 
 type Possibility = {
     players: PlayerResult[];
@@ -106,15 +107,34 @@ export default class League {
         });
     }
 
-    public rankPlayers(games: Game[]): Possibility {
+    public rankPlayers(): Player[] {
+        const comparing = <T>(keyExtractor: (value: T) => number) => (v1: T, v2: T) =>
+            keyExtractor(v1) - keyExtractor(v2);
+        const not = <T>(comparator: (v1: T, v2: T) => number) => (v2: T, v1: T) =>
+            comparator(v1, v2);
+        const chain = <T>(...comparators: Array<(v1: T, v2: T) => number>) => (v1: T, v2: T) => {
+            for (let i = 0; i < comparators.length; i++) {
+                const comparison = comparators[i](v1, v2);
+                if (comparison != 0) return comparison;
+            }
+            return 0;
+        };
+
         const players = this.playerTable.players.slice(0);
         players.forEach(player => {
             player.resetFlags();
         });
-        players.sort((p1, p2) => (p1.win != p2.win ? p2.win - p1.win : p1.order - p2.order));
+        players.sort(
+            chain(not(comparing(p => p.win)), comparing(p => p.lose), comparing(p => p.order))
+        );
         players.forEach((player, num) => {
             player.rank = num;
         });
+        return players;
+    }
+
+    public rankAndLogPlayers(games: Game[]): Possibility {
+        const players = this.rankPlayers();
         if (this.setting.playoff) {
             // assume only 1 can challenge
             let flagPlayoff = false;
@@ -196,7 +216,7 @@ export default class League {
 
     public searchAndRank(remainingGames: Game[], i: number) {
         if (remainingGames.length <= i) {
-            const ranks = this.rankPlayers(remainingGames);
+            const ranks = this.rankAndLogPlayers(remainingGames);
             this.searched.push(ranks);
             return;
         }
@@ -207,5 +227,6 @@ export default class League {
         League.tempLose(game);
         this.searchAndRank(remainingGames, i + 1);
         League.tempLoseBack(game);
+        this.rankPlayers();
     }
 }

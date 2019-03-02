@@ -1,4 +1,5 @@
-import React, { FunctionComponent, useCallback, useContext, useMemo } from "react";
+import React, { FunctionComponent, useCallback, useContext, useMemo, useState } from "react";
+
 import Game from "../model/Game";
 import League from "../model/League";
 import Player from "../model/Player";
@@ -16,13 +17,29 @@ const PlayerTable: FunctionComponent<Props> = ({ model, games }) => {
         () => games[model.players[0].name].map((_, i) => <th key={i}>{i + 1}回戦</th>),
         []
     );
+
+    const [sort, setSort] = useState("order");
+    const setSortByOrder = useCallback(() => setSort("order"), []);
+    const setSortByRank = useCallback(() => setSort("rank"), []);
+
+    const sortedPlayers = model.players
+        .slice()
+        .sort(sort == "order" ? (p1, p2) => p1.order - p2.order : (p1, p2) => p1.rank - p2.rank);
+    console.log(model.players.map(p => p.rank));
+
     return (
         <table>
             <thead>
                 <tr>
+                    <th>
+                        昨順
+                        <button onClick={setSortByOrder}>{sort == "order" ? "▲" : "△"}</button>
+                    </th>
                     <th>棋士</th>
                     <th>勝敗</th>
-                    <th>順</th>
+                    <th>
+                        順<button onClick={setSortByRank}>{sort == "rank" ? "▲" : "△"}</button>
+                    </th>
                     <th>確</th>
                     {useContext(SettingContext).playoff ? (
                         <>
@@ -37,8 +54,8 @@ const PlayerTable: FunctionComponent<Props> = ({ model, games }) => {
                 </tr>
             </thead>
             <tbody>
-                {model.players.map((player, i) => (
-                    <PlayerTableRow player={player} games={games[player.name]} key={i} />
+                {sortedPlayers.map(player => (
+                    <PlayerTableRow player={player} games={games[player.name]} key={player.order} />
                 ))}
             </tbody>
         </table>
@@ -67,6 +84,7 @@ const PlayerTableRow: FunctionComponent<RowProps> = ({ player, games }) => {
     }
     return (
         <tr className={className}>
+            <td>{player.order + 1}</td>
             <td>{player.name}</td>
             <td>{`${player.win}-${player.lose}`}</td>
             <td>{player.rank + 1}</td>
